@@ -7,6 +7,7 @@
 ----------------------------------------------
 ------------MOD CODE -------------------------
 
+-- force Enhanced card to be m_lucky only
 local createCardRef = create_card
 function create_card(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
     local card = createCardRef(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
@@ -16,13 +17,50 @@ function create_card(_type, area, legendary, _rarity, skip_materialize, soulable
     return card
 end
 
-local BlindDebuffCard = Blind.debuff_card
+-- Never debuff card if blink is "The Head" (protects All Hearts deck)
+local BlindDebuffCardRef = Blind.debuff_card
 function Blind:debuff_card(card, from_blind)
     if self.name ~= 'The Head' then
-        BlindDebuffCard(card, from_blind)
+        BlindDebuffCardRef(card, from_blind)
     end
 end
 
+-- Force Lucky Card to trigger mult
+local CardGetChipMultRef = Card.get_chip_mult
+function Card:get_chip_mult()
+    local mult = CardGetChipMultRef(self)
+    if self.ability.effect == "Lucky Card" then 
+        self.lucky_trigger = true
+        return self.ability.mult
+    else
+        return mult
+    end
+end
+
+-- Force Lucky Card to trigger dollars
+function Card:get_p_dollars()
+    if self.debuff then return 0 end
+    local ret = 0
+    if self.seal == 'Gold' then
+        ret = ret +  3
+    end
+    if self.ability.p_dollars > 0 then
+        if self.ability.effect == "Lucky Card" then
+                self.lucky_trigger = true
+                ret = ret +  self.ability.p_dollars
+        else
+            ret = ret + self.ability.p_dollars
+        end
+    end
+    if ret > 0 then
+        G.GAME.dollar_buffer = (G.GAME.dollar_buffer or 0) + ret
+        G.E_MANAGER:add_event(Event({func = (function() G.GAME.dollar_buffer = 0; return true end)}))
+    end
+    return ret
+end
+
+-- When open standard pack, only choose one card to be Enhanced and m_lucky
+-- order of the card in the pack is picked randomly
 function Card:open()
     if self.ability.set == "Booster" then
         stop_use()
