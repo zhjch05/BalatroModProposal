@@ -63,6 +63,8 @@ end
 
 -- When open standard pack, only choose one card to be Enhanced and m_lucky
 -- order of the card in the pack is picked randomly
+-- When open celestial pack, only choose one card to be c_black_hole
+-- order of the card in the pack is picked randomly
 function Card:open()
     if self.ability.set == "Booster" then
         stop_use()
