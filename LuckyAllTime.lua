@@ -111,7 +111,7 @@ function Card:open()
                 local _size = self.ability.extra
 
                 local enhanced_card_position = math.random(1, _size)
-                local c_black_hole_added = false  -- Flag to ensure one c_black_hole card
+                local black_hole_position = math.random(1, _size)  -- Random position for the c_black_hole card
 
                 for i = 1, _size do
                     local card = nil
@@ -122,9 +122,8 @@ function Card:open()
                             card = create_card("Tarot", G.pack_cards, nil, nil, true, true, nil, 'ar1')
                         end
                     elseif self.ability.name:find('Celestial') then
-                        if not c_black_hole_added then
+                        if i == black_hole_position then
                             card = create_card("Planet", G.pack_cards, nil, nil, true, true, "c_black_hole", 'pl1')
-                            c_black_hole_added = true
                         else
                             if G.GAME.used_vouchers.v_telescope and i == 1 then
                                 local _planet, _hand, _tally = nil, nil, 0
