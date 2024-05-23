@@ -7,10 +7,11 @@
 ----------------------------------------------
 ------------MOD CODE -------------------------
 
--- force Enhanced card to be m_lucky only
+
 local createCardRef = create_card
 function create_card(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
     local card = createCardRef(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
+    -- force Enhanced card to be m_lucky only
     if _type == 'Enhanced' then
         card:set_ability(G.P_CENTERS.m_lucky)
     end
@@ -110,6 +111,8 @@ function Card:open()
                 local _size = self.ability.extra
 
                 local enhanced_card_position = math.random(1, _size)
+                local c_black_hole_added = false  -- Flag to ensure one c_black_hole card
+
                 for i = 1, _size do
                     local card = nil
                     if self.ability.name:find('Arcana') then 
@@ -119,24 +122,29 @@ function Card:open()
                             card = create_card("Tarot", G.pack_cards, nil, nil, true, true, nil, 'ar1')
                         end
                     elseif self.ability.name:find('Celestial') then
-                        if G.GAME.used_vouchers.v_telescope and i == 1 then
-                            local _planet, _hand, _tally = nil, nil, 0
-                            for k, v in ipairs(G.handlist) do
-                                if G.GAME.hands[v].visible and G.GAME.hands[v].played > _tally then
-                                    _hand = v
-                                    _tally = G.GAME.hands[v].played
-                                end
-                            end
-                            if _hand then
-                                for k, v in pairs(G.P_CENTER_POOLS.Planet) do
-                                    if v.config.hand_type == _hand then
-                                        _planet = v.key
+                        if not c_black_hole_added then
+                            card = create_card("Planet", G.pack_cards, nil, nil, true, true, "c_black_hole", 'pl1')
+                            c_black_hole_added = true
+                        else
+                            if G.GAME.used_vouchers.v_telescope and i == 1 then
+                                local _planet, _hand, _tally = nil, nil, 0
+                                for k, v in ipairs(G.handlist) do
+                                    if G.GAME.hands[v].visible and G.GAME.hands[v].played > _tally then
+                                        _hand = v
+                                        _tally = G.GAME.hands[v].played
                                     end
                                 end
+                                if _hand then
+                                    for k, v in pairs(G.P_CENTER_POOLS.Planet) do
+                                        if v.config.hand_type == _hand then
+                                            _planet = v.key
+                                        end
+                                    end
+                                end
+                                card = create_card("Planet", G.pack_cards, nil, nil, true, true, _planet, 'pl1')
+                            else
+                                card = create_card("Planet", G.pack_cards, nil, nil, true, true, nil, 'pl1')
                             end
-                            card = create_card("Planet", G.pack_cards, nil, nil, true, true, _planet, 'pl1')
-                        else
-                            card = create_card("Planet", G.pack_cards, nil, nil, true, true, nil, 'pl1')
                         end
                     elseif self.ability.name:find('Spectral') then
                         card = create_card("Spectral", G.pack_cards, nil, nil, true, true, nil, 'spe')
