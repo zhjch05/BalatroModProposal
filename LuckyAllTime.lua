@@ -21,8 +21,9 @@ end
 local BlindDebuffCardRef = Blind.debuff_card
 function Blind:debuff_card(card, from_blind)
     if self.name ~= 'The Head' then
-        BlindDebuffCardRef(card, from_blind)
+        BlindDebuffCardRef(self, card, from_blind)
     end
+    card:set_debuff(false)
 end
 
 -- Force Lucky Card to trigger mult
