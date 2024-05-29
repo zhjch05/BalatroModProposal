@@ -1,8 +1,8 @@
 --- STEAMODDED HEADER
---- MOD_NAME: Growth Joker
+--- MOD_NAME: 成长
 --- MOD_ID: growthjoker
 --- MOD_AUTHOR: [XXX]
---- MOD_DESCRIPTION: A mod that introduces a Joker card which grows in multiplier each round.
+--- MOD_DESCRIPTION: Growth
 
 ----------------------------------------------
 ------------MOD CODE -------------------------
@@ -12,12 +12,12 @@ function SMODS.INIT.GrowthJoker()
         "Growth", "growth",
         { extra = 3, mult = 3 },
         { x = 0, y = 0 }, loc_def,
-        2, 6, true, true, true, true
+        4, 6, true, true, true, true
     )
 
     j_growth.slug = "j_growth"
     j_growth.loc_txt = {
-        name = "Growth",
+        name = "成长",
         text = {
             "这张小丑牌在每轮结束时获得{C:red}+#1#{}倍率",
             "{C:inactive}（当前为{C:red}+#2#{}倍率）"
