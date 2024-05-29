@@ -41,21 +41,20 @@ function SMODS.INIT.LoveJoker()
                 local rank = card.base.value
                 card:set_base(G.P_CARDS["H" .. "_" .. rank])
             end
-            return card
         end
+        return card
     end
 
     local Card_add_to_deck = Card.add_to_deck
     function Card:add_to_deck(from_debuff)
         Card_add_to_deck(self, from_debuff)
-        if self.ability == 'Love Joker' then
+        if self.ability.name == 'Love Joker' then
             G.E_MANAGER:add_event(Event({
                 func = function()
                     for i = #G.playing_cards, 1, -1 do
                         local rank = G.playing_cards[i].base.value
                         G.playing_cards[i]:set_base(G.P_CARDS["H" .. "_" .. rank])
                     end
-    
                     return true
                 end
             }))
