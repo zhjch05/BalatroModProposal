@@ -1,7 +1,7 @@
 -- STEAMODDED HEADER
 -- MOD_NAME: Responsibility Joker
 -- MOD_ID: responsibilityjoker
--- MOD_AUTHOR: [Your Name]
+-- MOD_AUTHOR: [XXX]
 -- MOD_DESCRIPTION: Responsibility Joker Mod
 
 ----------------------------------------------
