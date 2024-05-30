@@ -199,19 +199,19 @@ function SMODS.INIT.GrowthLoveJoker()
     local createCardRef = create_card
     function create_card(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
         if G.GAME and G.GAME.round_resets and G.GAME.round_resets.ante >= 1 then
-            if _type == 'Joker' then
+            if area == G.shop_jokers then
                 if not G.MythJokerMod.j_growth_created then
-                    local card = createCardRef(_type, area, legendary, _rarity, skip_materialize, soulable, 'j_growth', key_append)
+                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_growth', key_append)
                     G.MythJokerMod.j_growth_created = true
                     card:set_eternal(true)
                     return card
                 elseif not G.MythJokerMod.j_love_created then
-                    local card = createCardRef(_type, area, legendary, _rarity, skip_materialize, soulable, 'j_love', key_append)
+                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_love', key_append)
                     G.MythJokerMod.j_love_created = true
                     card:set_eternal(true)
                     return card
                 elseif not G.MythJokerMod.j_responsibility_created then
-                    local card = createCardRef(_type, area, legendary, _rarity, skip_materialize, soulable, 'j_responsibility', key_append)
+                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_responsibility', key_append)
                     G.MythJokerMod.j_responsibility_created = true
                     card:set_eternal(true)
                     return card
