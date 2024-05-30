@@ -1,15 +1,15 @@
 --- STEAMODDED HEADER
---- MOD_NAME: 成长与爱情
---- MOD_ID: growthlovejoker
---- MOD_AUTHOR: [XXX]
---- MOD_DESCRIPTION: Growth and Love
+--- MOD_NAME: 么么
+--- MOD_ID: kisskiss
+--- MOD_AUTHOR: [???]
+--- MOD_DESCRIPTION: ???
 
 ----------------------------------------------
 ------------MOD CODE -------------------------
 
 -- NV81L1W1 seed
 
-function SMODS.INIT.GrowthLoveJoker()
+function SMODS.INIT.KissKiss()
     -- Growth Joker initialization
     local j_growth = SMODS.Joker:new(
         "Growth", "growth",
@@ -26,8 +26,8 @@ function SMODS.INIT.GrowthLoveJoker()
             "{C:inactive}（当前为{C:red}+#2#{}倍率）"
         }
     }
-    j_growth.mod = "growthlovejoker"
-    j_growth.atlas = "growthlovejoker"
+    j_growth.mod = "kisskiss"
+    j_growth.atlas = "kisskiss"
     j_growth:register()
 
     -- Love Joker initialization
@@ -46,8 +46,8 @@ function SMODS.INIT.GrowthLoveJoker()
             "以后所有牌都变为{C:hearts}红桃{}"
         }
     }
-    j_love.mod = "growthlovejoker"
-    j_love.atlas = "growthlovejoker"
+    j_love.mod = "kisskiss"
+    j_love.atlas = "kisskiss"
     j_love:register()
 
     local j_responsibility = SMODS.Joker:new(
@@ -65,8 +65,8 @@ function SMODS.INIT.GrowthLoveJoker()
             "盲注后随机获得{C:gold}$#2#{}",
         }
     }
-    j_responsibility.mod = "growthlovejoker"
-    j_responsibility.atlas = "growthlovejoker"
+    j_responsibility.mod = "kisskiss"
+    j_responsibility.atlas = "kisskiss"
     j_responsibility:register()
 
     local j_communication = SMODS.Joker:new(
@@ -84,8 +84,8 @@ function SMODS.INIT.GrowthLoveJoker()
             "{C:green}无限{}次免费重掷"
         }
     }
-    j_communication.mod = "growthlovejoker"
-    j_communication.atlas = "growthlovejoker"
+    j_communication.mod = "kisskiss"
+    j_communication.atlas = "kisskiss"
     j_communication:register()
 
     local Card_calculate_joker_ref = Card.calculate_joker
@@ -200,14 +200,14 @@ function SMODS.INIT.GrowthLoveJoker()
     end
 
     -- Additional Sprite registration
-    SMODS.Sprite:new("growthlovejoker", SMODS.findModByID("growthlovejoker").path, "j_growth.png", 71, 95, "asset_atli")
+    SMODS.Sprite:new("kisskiss", SMODS.findModByID("kisskiss").path, "j_growth.png", 71, 95, "asset_atli")
         :register()
-    SMODS.Sprite:new("growthlovejoker", SMODS.findModByID("growthlovejoker").path, "j_love.png", 71, 95, "asset_atli")
+    SMODS.Sprite:new("kisskiss", SMODS.findModByID("kisskiss").path, "j_love.png", 71, 95, "asset_atli")
         :register()
-    SMODS.Sprite:new("growthlovejoker", SMODS.findModByID("growthlovejoker").path, "j_responsibility.png", 71, 95,
+    SMODS.Sprite:new("kisskiss", SMODS.findModByID("kisskiss").path, "j_responsibility.png", 71, 95,
         "asset_atli")
         :register()
-    SMODS.Sprite:new("growthlovejoker", SMODS.findModByID("growthlovejoker").path, "j_responsibility.png", 71, 95,
+    SMODS.Sprite:new("kisskiss", SMODS.findModByID("kisskiss").path, "j_responsibility.png", 71, 95,
         "asset_atli")
         :register()
 
