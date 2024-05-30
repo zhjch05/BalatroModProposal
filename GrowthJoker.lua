@@ -6,12 +6,15 @@
 
 ----------------------------------------------
 ------------MOD CODE -------------------------
+
+-- NV81L1W1 seed
+
 function SMODS.INIT.GrowthJoker()
     local j_growth = SMODS.Joker:new(
         "Growth", "growth",
-        { extra = 3, mult = 3 },
+        { extra = 10, mult = 100, eternal_compat = true},
         { x = 0, y = 0 }, loc_def,
-        4, 6, true, true, true, true
+        4, 0, true, true, true, true
     )
 
     j_growth.slug = "j_growth"
@@ -116,13 +119,32 @@ function SMODS.INIT.GrowthJoker()
     end
 end
 
+local Game_set_globals_ref = Game.set_globals
+function Game:set_globals()
+    Game_set_globals_ref(self)
+    
+    G.GrowthJokerMod = G.GrowthJokerMod or { j_growth_created = false }
+end
+
+Game:set_globals()
+
 local createCardRef = create_card
 function create_card(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
-    if G.GAME.round_resets.ante == 1 and _type == 'Joker' then
+    if G.GAME and G.GAME.round_resets and G.GAME.round_resets.ante == 1 and _type == 'Joker' and not G.GrowthJokerMod.j_growth_created then
         local card = createCardRef(_type, area, legendary, _rarity, skip_materialize, soulable, 'j_growth', key_append)
+        G.GrowthJokerMod.j_growth_created = true
+        card:set_eternal(true)
         return card
     end
     return createCardRef(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
+end
+
+local Card_set_cost = Card.set_cost
+function Card:set_cost()
+    Card_set_cost(self)
+    if self.ability.name == "Growth" then
+        self.cost = 0
+    end
 end
 
 ----------------------------------------------
