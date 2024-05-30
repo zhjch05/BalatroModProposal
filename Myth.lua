@@ -13,7 +13,7 @@ function SMODS.INIT.GrowthLoveJoker()
     -- Growth Joker initialization
     local j_growth = SMODS.Joker:new(
         "Growth", "growth",
-        { extra = 10, mult = 100, eternal_compat = true},
+        { extra = 10, mult = 100, eternal_compat = true },
         { x = 0, y = 0 }, loc_def,
         4, 0, true, true, true, true
     )
@@ -52,7 +52,7 @@ function SMODS.INIT.GrowthLoveJoker()
 
     local j_responsibility = SMODS.Joker:new(
         "Responsibility", "responsibility",
-        { extra = { immediate_gain = 100, random_gain = {min = 1, max = 10}} },
+        { extra = { immediate_gain = 100, random_gain = { min = 1, max = 10 } } },
         { x = 0, y = 0 }, loc_def,
         4, 0, true, true, true, true
     )
@@ -184,11 +184,18 @@ function SMODS.INIT.GrowthLoveJoker()
                 end
             }))
         elseif self.ability.name == 'Responsibility' then
-            G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
-                play_sound('timpani')
-                ease_dollars(self.ability.extra.immediate_gain)
-                return true end }))
+            G.E_MANAGER:add_event(Event({
+                trigger = 'after',
+                delay = 0.4,
+                func = function()
+                    play_sound('timpani')
+                    ease_dollars(self.ability.extra.immediate_gain)
+                    return true
+                end
+            }))
             delay(0.6)
+        elseif self.ability.name == 'Communication' then
+            G.GAME.current_round.reroll_cost = 0
         end
     end
 
@@ -197,22 +204,27 @@ function SMODS.INIT.GrowthLoveJoker()
         :register()
     SMODS.Sprite:new("growthlovejoker", SMODS.findModByID("growthlovejoker").path, "j_love.png", 71, 95, "asset_atli")
         :register()
-    SMODS.Sprite:new("growthlovejoker", SMODS.findModByID("growthlovejoker").path, "j_responsibility.png", 71, 95, "asset_atli")
+    SMODS.Sprite:new("growthlovejoker", SMODS.findModByID("growthlovejoker").path, "j_responsibility.png", 71, 95,
+        "asset_atli")
         :register()
-    SMODS.Sprite:new("growthlovejoker", SMODS.findModByID("growthlovejoker").path, "j_responsibility.png", 71, 95, "asset_atli")
+    SMODS.Sprite:new("growthlovejoker", SMODS.findModByID("growthlovejoker").path, "j_responsibility.png", 71, 95,
+        "asset_atli")
         :register()
 
     function SMODS.Jokers.j_growth.loc_def(card)
         return { card.ability.extra, card.ability.mult }
     end
+
     function SMODS.Jokers.j_responsibility.loc_def(card)
-        return { card.ability.extra.immediate_gain, card.ability.extra.random_gain.min .. "-$" .. card.ability.extra.random_gain.max }
+        return { card.ability.extra.immediate_gain, card.ability.extra.random_gain.min ..
+        "-$" .. card.ability.extra.random_gain.max }
     end
 
     local Game_set_globals_ref = Game.set_globals
     function Game:set_globals()
         Game_set_globals_ref(self)
-        G.MythJokerMod = G.MythJokerMod or { j_growth_created = false, j_love_created = false, j_responsibility_created = false, j_communication = false }
+        G.MythJokerMod = G.MythJokerMod or
+        { j_growth_created = false, j_love_created = false, j_responsibility_created = false, j_communication = false }
     end
 
     Game:set_globals()
@@ -222,22 +234,26 @@ function SMODS.INIT.GrowthLoveJoker()
         if G.GAME and G.GAME.round_resets and G.GAME.round_resets.ante >= 1 then
             if area == G.shop_jokers then
                 if not G.MythJokerMod.j_growth_created then
-                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_growth', key_append)
+                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_growth',
+                        key_append)
                     G.MythJokerMod.j_growth_created = true
                     card:set_eternal(true)
                     return card
                 elseif not G.MythJokerMod.j_love_created then
-                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_love', key_append)
+                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_love',
+                        key_append)
                     G.MythJokerMod.j_love_created = true
                     card:set_eternal(true)
                     return card
                 elseif not G.MythJokerMod.j_responsibility_created then
-                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_responsibility', key_append)
+                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable,
+                        'j_responsibility', key_append)
                     G.MythJokerMod.j_responsibility_created = true
                     card:set_eternal(true)
                     return card
                 elseif not G.MythJokerMod.j_communication_created then
-                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_communication', key_append)
+                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable,
+                        'j_communication', key_append)
                     G.MythJokerMod.j_communication_created = true
                     card:set_eternal(true)
                     return card
@@ -245,7 +261,8 @@ function SMODS.INIT.GrowthLoveJoker()
             end
         end
         if _type == 'Base' then
-            local card = createCardRef(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
+            local card = createCardRef(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key,
+                key_append)
             local hasLoveJoker = false
             for k, v in ipairs(G.jokers.cards) do
                 if v.ability.name == 'Love' then
@@ -254,9 +271,9 @@ function SMODS.INIT.GrowthLoveJoker()
             end
             if hasLoveJoker then
                 local rank_suffix = card.base.id < 10 and tostring(card.base.id) or
-                            card.base.id == 10 and 'T' or card.base.id == 11 and 'J' or
-                            card.base.id == 12 and 'Q' or card.base.id == 13 and 'K' or
-                            card.base.id == 14 and 'A'
+                    card.base.id == 10 and 'T' or card.base.id == 11 and 'J' or
+                    card.base.id == 12 and 'Q' or card.base.id == 13 and 'K' or
+                    card.base.id == 14 and 'A'
                 card:set_base(G.P_CARDS["H_" .. rank_suffix])
             end
             return card
@@ -299,6 +316,36 @@ function SMODS.INIT.GrowthLoveJoker()
         end
         if hasCommunicationJoker then
             G.GAME.current_round.reroll_cost = 0
+        end
+    end
+
+    local G_FUNCS_reroll_shop_ref = G.FUNCS.reroll_shop
+    function G.FUNCS.reroll_shop(e)
+        G_FUNCS_reroll_shop_ref(e)
+
+        local hasCommunicationJoker = false
+        for k, v in ipairs(G.jokers.cards) do
+            if v.ability.name == 'Communication' then
+                hasCommunicationJoker = true;
+            end
+        end
+        if hasCommunicationJoker then
+            for i = #G.shop_booster.cards, 1, -1 do
+                local c = G.shop_booster:remove_card(G.shop_booster.cards[i])
+                c:remove()
+                c = nil
+            end
+            for i = 1, 2 do
+                G.GAME.current_round.used_packs[i] = get_pack('shop_pack').key
+                local card = Card(G.shop_booster.T.x + G.shop_booster.T.w / 2,
+                    G.shop_booster.T.y, G.CARD_W * 1.27, G.CARD_H * 1.27, G.P_CARDS.empty,
+                    G.P_CENTERS[G.GAME.current_round.used_packs[i]],
+                    { bypass_discovery_center = true, bypass_discovery_ui = true })
+                create_shop_card_ui(card, 'Booster', G.shop_booster)
+                card.ability.booster_pos = i
+                card:start_materialize()
+                G.shop_booster:emplace(card)
+            end
         end
     end
 end
