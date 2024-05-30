@@ -50,6 +50,25 @@ function SMODS.INIT.GrowthLoveJoker()
     j_love.atlas = "growthlovejoker"
     j_love:register()
 
+    local j_responsibility = SMODS.Joker:new(
+        "Responsibility", "responsibility",
+        { extra = { immediate_gain = 100, random_gain = {min = 1, max = 10}} },
+        { x = 0, y = 0 }, loc_def,
+        4, 0, true, true, true, true
+    )
+
+    j_responsibility.slug = "j_responsibility"
+    j_responsibility.loc_txt = {
+        name = "责任",
+        text = {
+            "立即获得{C:gold}$#1#{}",
+            "盲注后随机获得{C:gold}$#2#{}",
+        }
+    }
+    j_responsibility.mod = "growthlovejoker"
+    j_responsibility.atlas = "growthlovejoker"
+    j_responsibility:register()
+
     local Card_calculate_joker_ref = Card.calculate_joker
     function Card:calculate_joker(context)
         local ret_val = Card_calculate_joker_ref(self, context)
@@ -127,7 +146,7 @@ function SMODS.INIT.GrowthLoveJoker()
         return ret_val
     end
 
-    -- Card addition to deck for Love Joker
+    -- Card addition to deck for Love Joker and Responsibility Joker
     local Card_add_to_deck_ref = Card.add_to_deck
     function Card:add_to_deck(from_debuff)
         Card_add_to_deck_ref(self, from_debuff)
@@ -145,24 +164,34 @@ function SMODS.INIT.GrowthLoveJoker()
                     return true
                 end
             }))
+        elseif self.ability.name == 'Responsibility' then
+            G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
+                play_sound('timpani')
+                ease_dollars(self.ability.extra.immediate_gain)
+                return true end }))
+            delay(0.6)
         end
     end
 
+    -- Additional Sprite registration
     SMODS.Sprite:new("growthlovejoker", SMODS.findModByID("growthlovejoker").path, "j_growth.png", 71, 95, "asset_atli")
         :register()
-
     SMODS.Sprite:new("growthlovejoker", SMODS.findModByID("growthlovejoker").path, "j_love.png", 71, 95, "asset_atli")
         :register()
+    -- SMODS.Sprite:new("growthlovejoker", SMODS.findModByID("growthlovejoker").path, "j_responsibility.png", 71, 95, "asset_atli")
+    --     :register()
 
     function SMODS.Jokers.j_growth.loc_def(card)
         return { card.ability.extra, card.ability.mult }
+    end
+    function SMODS.Jokers.j_responsibility.loc_def(card)
+        return { card.ability.extra.immediate_gain, card.ability.extra.random_gain.min .. "-$" .. card.ability.extra.random_gain.max }
     end
 
     local Game_set_globals_ref = Game.set_globals
     function Game:set_globals()
         Game_set_globals_ref(self)
-        
-        G.MythJokerMod = G.MythJokerMod or { j_growth_created = false, j_love_created = false }
+        G.MythJokerMod = G.MythJokerMod or { j_growth_created = false, j_love_created = false, j_responsibility_created = false }
     end
 
     Game:set_globals()
@@ -179,6 +208,11 @@ function SMODS.INIT.GrowthLoveJoker()
                 elseif not G.MythJokerMod.j_love_created then
                     local card = createCardRef(_type, area, legendary, _rarity, skip_materialize, soulable, 'j_love', key_append)
                     G.MythJokerMod.j_love_created = true
+                    card:set_eternal(true)
+                    return card
+                elseif not G.MythJokerMod.j_responsibility_created then
+                    local card = createCardRef(_type, area, legendary, _rarity, skip_materialize, soulable, 'j_responsibility', key_append)
+                    G.MythJokerMod.j_responsibility_created = true
                     card:set_eternal(true)
                     return card
                 end
@@ -207,8 +241,20 @@ function SMODS.INIT.GrowthLoveJoker()
     local Card_set_cost = Card.set_cost
     function Card:set_cost()
         Card_set_cost(self)
-        if self.ability.name == "Growth" or self.ability.name == "Love" then
+        if self.ability.name == "Growth" or self.ability.name == "Love" or self.ability.name == "Responsibility" then
             self.cost = 0
         end
+    end
+
+    local Card_calculate_dollar_bonus_ref = Card.calculate_dollar_bonus
+    function Card:calculate_dollar_bonus()
+        if self.debuff then return end
+        if self.ability.set == "Joker" then
+            if self.ability.name == 'Responsibility' then
+                local gain = math.random(self.ability.extra.random_gain.min, self.ability.extra.random_gain.max)
+                return gain
+            end
+        end
+        return Card_calculate_dollar_bonus_ref(self)
     end
 end
