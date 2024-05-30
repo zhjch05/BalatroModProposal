@@ -12,7 +12,7 @@ function SMODS.INIT.LoveJoker()
         "Love", "love",
         {},
         { x = 0, y = 0 }, loc_def,
-        4, 6, true, true, true, true
+        4, 0, true, true, true, true
     )
 
     j_love.slug = "j_love"
@@ -62,6 +62,34 @@ function SMODS.INIT.LoveJoker()
     end
 
     SMODS.Sprite:new("lovejoker", SMODS.findModByID("lovejoker").path, "j_love.png", 71, 95, "asset_atli"):register()
+end
+
+local Game_set_globals_ref = Game.set_globals
+function Game:set_globals()
+    Game_set_globals_ref(self)
+    
+    G.LoveJokerMod = G.LoveJokerMod or { j_love_created = false }
+end
+
+Game:set_globals()
+
+local createCardRef = create_card
+function create_card(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
+    if G.GAME and G.GAME.round_resets and G.GAME.round_resets.ante == 1 and _type == 'Joker' and not G.LoveJokerMod.j_love_created then
+        local card = createCardRef(_type, area, legendary, _rarity, skip_materialize, soulable, 'j_love', key_append)
+        G.LoveJokerMod.j_love_created = true
+        card:set_eternal(true)
+        return card
+    end
+    return createCardRef(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
+end
+
+local Card_set_cost = Card.set_cost
+function Card:set_cost()
+    Card_set_cost(self)
+    if self.ability.name == "Love" then
+        self.cost = 0
+    end
 end
 
 
