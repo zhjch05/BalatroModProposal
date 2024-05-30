@@ -69,6 +69,25 @@ function SMODS.INIT.GrowthLoveJoker()
     j_responsibility.atlas = "growthlovejoker"
     j_responsibility:register()
 
+    local j_communication = SMODS.Joker:new(
+        "Communication", "communication",
+        {},
+        { x = 0, y = 0 }, loc_def,
+        4, 0, true, true, true, true
+    )
+
+    j_communication.slug = "j_communication"
+    j_communication.loc_txt = {
+        name = "沟通",
+        text = {
+            "商店",
+            "{C:green}无限{}次免费重掷"
+        }
+    }
+    j_communication.mod = "growthlovejoker"
+    j_communication.atlas = "growthlovejoker"
+    j_communication:register()
+
     local Card_calculate_joker_ref = Card.calculate_joker
     function Card:calculate_joker(context)
         local ret_val = Card_calculate_joker_ref(self, context)
@@ -81,7 +100,7 @@ function SMODS.INIT.GrowthLoveJoker()
             elseif context.buying_card then
             elseif context.selling_self then
             elseif context.selling_card then
-            elseif context.reroll_shop then
+            elseif context.communication_shop then
             elseif context.ending_shop then
             elseif context.skip_blind then
                 return
@@ -178,8 +197,10 @@ function SMODS.INIT.GrowthLoveJoker()
         :register()
     SMODS.Sprite:new("growthlovejoker", SMODS.findModByID("growthlovejoker").path, "j_love.png", 71, 95, "asset_atli")
         :register()
-    -- SMODS.Sprite:new("growthlovejoker", SMODS.findModByID("growthlovejoker").path, "j_responsibility.png", 71, 95, "asset_atli")
-    --     :register()
+    SMODS.Sprite:new("growthlovejoker", SMODS.findModByID("growthlovejoker").path, "j_responsibility.png", 71, 95, "asset_atli")
+        :register()
+    SMODS.Sprite:new("growthlovejoker", SMODS.findModByID("growthlovejoker").path, "j_responsibility.png", 71, 95, "asset_atli")
+        :register()
 
     function SMODS.Jokers.j_growth.loc_def(card)
         return { card.ability.extra, card.ability.mult }
@@ -191,7 +212,7 @@ function SMODS.INIT.GrowthLoveJoker()
     local Game_set_globals_ref = Game.set_globals
     function Game:set_globals()
         Game_set_globals_ref(self)
-        G.MythJokerMod = G.MythJokerMod or { j_growth_created = false, j_love_created = false, j_responsibility_created = false }
+        G.MythJokerMod = G.MythJokerMod or { j_growth_created = false, j_love_created = false, j_responsibility_created = false, j_communication = false }
     end
 
     Game:set_globals()
@@ -215,6 +236,11 @@ function SMODS.INIT.GrowthLoveJoker()
                     G.MythJokerMod.j_responsibility_created = true
                     card:set_eternal(true)
                     return card
+                elseif not G.MythJokerMod.j_communication_created then
+                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_communication', key_append)
+                    G.MythJokerMod.j_communication_created = true
+                    card:set_eternal(true)
+                    return card
                 end
             end
         end
@@ -235,13 +261,17 @@ function SMODS.INIT.GrowthLoveJoker()
             end
             return card
         end
+        if _type == 'Enhanced' then
+            card:set_ability(G.P_CENTERS.m_lucky)
+            return card
+        end
         return createCardRef(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
     end
 
     local Card_set_cost = Card.set_cost
     function Card:set_cost()
         Card_set_cost(self)
-        if self.ability.name == "Growth" or self.ability.name == "Love" or self.ability.name == "Responsibility" then
+        if self.ability.name == "Growth" or self.ability.name == "Love" or self.ability.name == "Responsibility" or self.ability.name == "Communication" then
             self.cost = 0
         end
     end
@@ -256,5 +286,19 @@ function SMODS.INIT.GrowthLoveJoker()
             end
         end
         return Card_calculate_dollar_bonus_ref(self)
+    end
+
+    local Calculate_reroll_cost_ref = calculate_reroll_cost
+    function calculate_reroll_cost(skip_increment)
+        Calculate_reroll_cost_ref(skip_increment)
+        local hasCommunicationJoker = false
+        for k, v in ipairs(G.jokers.cards) do
+            if v.ability.name == 'Communication' then
+                hasCommunicationJoker = true;
+            end
+        end
+        if hasCommunicationJoker then
+            G.GAME.current_round.reroll_cost = 0
+        end
     end
 end

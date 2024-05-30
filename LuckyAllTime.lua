@@ -8,16 +8,6 @@
 ------------MOD CODE -------------------------
 
 
-local createCardRef = create_card
-function create_card(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
-    local card = createCardRef(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
-    -- force Enhanced card to be m_lucky only
-    if _type == 'Enhanced' then
-        card:set_ability(G.P_CENTERS.m_lucky)
-    end
-    return card
-end
-
 -- Never debuff card if blink is "The Head" (protects All Hearts deck)
 local BlindDebuffCardRef = Blind.debuff_card
 function Blind:debuff_card(card, from_blind)
