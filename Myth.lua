@@ -343,7 +343,22 @@ function SMODS.INIT.KissKiss()
             return card
         end
         if _type == 'Enhanced' then
+            local card = createCardRef(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key,
+                key_append)
             card:set_ability(G.P_CENTERS.m_lucky)
+            local hasLoveJoker = false
+            for k, v in ipairs(G.jokers.cards) do
+                if v.ability.name == 'Love' then
+                    hasLoveJoker = true;
+                end
+            end
+            if hasLoveJoker then
+                local rank_suffix = card.base.id < 10 and tostring(card.base.id) or
+                    card.base.id == 10 and 'T' or card.base.id == 11 and 'J' or
+                    card.base.id == 12 and 'Q' or card.base.id == 13 and 'K' or
+                    card.base.id == 14 and 'A'
+                card:set_base(G.P_CARDS["H_" .. rank_suffix])
+            end
             return card
         end
         return createCardRef(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
