@@ -88,6 +88,25 @@ function SMODS.INIT.KissKiss()
     j_communication.atlas = "kisskiss"
     j_communication:register()
 
+    local j_loyalty = SMODS.Joker:new(
+        "Loyalty", "loyalty",
+        {},
+        { x = 0, y = 0 }, loc_def,
+        4, 0, true, true, true, true
+    )
+
+    j_loyalty.slug = "j_loyalty"
+    j_loyalty.loc_txt = {
+        name = "忠诚",
+        text = {
+            "没有效果",
+        }
+    }
+    j_loyalty.mod = "kisskiss"
+    j_loyalty.atlas = "kisskiss"
+    j_loyalty:register()
+
+
     local Card_calculate_joker_ref = Card.calculate_joker
     function Card:calculate_joker(context)
         local ret_val = Card_calculate_joker_ref(self, context)
@@ -109,6 +128,23 @@ function SMODS.INIT.KissKiss()
             elseif context.playing_card_added and not self.getting_sliced then
             elseif context.first_hand_drawn then
             elseif context.setting_blind and not self.getting_sliced then
+                if self.ability.name == 'Loyalty' and not context.blueprint
+                    and context.blind.boss and not self.getting_sliced then
+                    G.E_MANAGER:add_event(Event({
+                        func = function()
+                            G.E_MANAGER:add_event(Event({
+                                func = function()
+                                    G.GAME.blind:disable()
+                                    -- play_sound('timpani')
+                                    -- delay(0.4)
+                                    return true
+                                end
+                            }))
+                            -- card_eval_status_text(self, 'extra', nil, nil, nil, { message = localize('ph_boss_disabled') })
+                            return true
+                        end
+                    }))
+                end
                 return
             elseif context.destroying_card and not context.blueprint then
                 return nil
@@ -197,6 +233,13 @@ function SMODS.INIT.KissKiss()
         elseif self.ability.name == 'Communication' then
             G.GAME.current_round.reroll_cost = 0
         end
+        if not self.added_to_deck then
+            if self.ability.name == 'Loyalty' and G.GAME.blind and G.GAME.blind.boss and not G.GAME.blind.disabled then
+                G.GAME.blind:disable()
+                -- play_sound('timpani')
+                -- card_eval_status_text(self, 'extra', nil, nil, nil, {message = localize('ph_boss_disabled')})
+            end
+        end
     end
 
     -- Additional Sprite registration
@@ -209,6 +252,8 @@ function SMODS.INIT.KissKiss()
         :register()
     SMODS.Sprite:new("kisskiss", SMODS.findModByID("kisskiss").path, "j_responsibility.png", 71, 95,
         "asset_atli")
+        :register()
+    SMODS.Sprite:new("kisskiss", SMODS.findModByID("kisskiss").path, "j_loyalty.png", 71, 95, "asset_atli")
         :register()
 
     function SMODS.Jokers.j_growth.loc_def(card)
@@ -224,37 +269,47 @@ function SMODS.INIT.KissKiss()
     function Game:set_globals()
         Game_set_globals_ref(self)
         G.MythJokerMod = G.MythJokerMod or
-        { j_growth_created = false, j_love_created = false, j_responsibility_created = false, j_communication = false }
+            { j_growth_created = false, j_love_created = false, j_responsibility_created = false, j_communication_created = false, j_loyalty_created = false }
     end
 
     Game:set_globals()
+
+    local function hasJokerWithAbility(ability)
+        for k, v in ipairs(G.jokers.cards) do
+            if v.ability.name == ability then
+                return true
+            end
+        end
+        return false
+    end
 
     local createCardRef = create_card
     function create_card(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
         if G.GAME and G.GAME.round_resets and G.GAME.round_resets.ante >= 1 then
             if area == G.shop_jokers then
-                if not G.MythJokerMod.j_growth_created then
-                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_growth',
-                        key_append)
-                    G.MythJokerMod.j_growth_created = true
-                    card:set_eternal(true)
-                    return card
-                elseif not G.MythJokerMod.j_love_created then
-                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_love',
-                        key_append)
+                if not G.MythJokerMod.j_love_created and not hasJokerWithAbility('Love') and G.GAME.round_resets.ante >= 3 then
+                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_love', key_append)
                     G.MythJokerMod.j_love_created = true
                     card:set_eternal(true)
                     return card
-                elseif not G.MythJokerMod.j_responsibility_created then
-                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable,
-                        'j_responsibility', key_append)
+                elseif not G.MythJokerMod.j_responsibility_created and not hasJokerWithAbility('Responsibility') and G.GAME.round_resets.ante >= 4 then
+                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_responsibility', key_append)
                     G.MythJokerMod.j_responsibility_created = true
                     card:set_eternal(true)
                     return card
-                elseif not G.MythJokerMod.j_communication_created then
-                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable,
-                        'j_communication', key_append)
+                elseif not G.MythJokerMod.j_growth_created and not hasJokerWithAbility('Growth') and G.GAME.round_resets.ante >= 5 then
+                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_growth', key_append)
+                    G.MythJokerMod.j_growth_created = true
+                    card:set_eternal(true)
+                    return card
+                elseif not G.MythJokerMod.j_communication_created and not hasJokerWithAbility('Communication') and G.GAME.round_resets.ante >= 6 then
+                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_communication', key_append)
                     G.MythJokerMod.j_communication_created = true
+                    card:set_eternal(true)
+                    return card
+                elseif not G.MythJokerMod.j_loyalty_created and not hasJokerWithAbility('Loyalty') and G.GAME.round_resets.ante >= 7 then
+                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_loyalty', key_append)
+                    G.MythJokerMod.j_loyalty_created = true
                     card:set_eternal(true)
                     return card
                 end
@@ -288,7 +343,7 @@ function SMODS.INIT.KissKiss()
     local Card_set_cost = Card.set_cost
     function Card:set_cost()
         Card_set_cost(self)
-        if self.ability.name == "Growth" or self.ability.name == "Love" or self.ability.name == "Responsibility" or self.ability.name == "Communication" then
+        if self.ability.name == "Growth" or self.ability.name == "Love" or self.ability.name == "Responsibility" or self.ability.name == "Communication" or self.ability.name == "Loyalty" then
             self.cost = 0
         end
     end
