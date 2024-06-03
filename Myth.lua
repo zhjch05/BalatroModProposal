@@ -295,31 +295,31 @@ function SMODS.INIT.KissKiss()
     function create_card(_type, area, legendary, _rarity, skip_materialize, soulable, forced_key, key_append)
         if G.GAME and G.GAME.round_resets and G.GAME.round_resets.ante >= 1 then
             if area == G.shop_jokers then
-                if not hasShopJokerWithAbility('Love') and not hasJokerWithAbility('Love') and G.GAME.round_resets.ante >= 1 then
+                if not hasShopJokerWithAbility('Love') and not hasJokerWithAbility('Love') and G.GAME.round_resets.ante >= 3 then
                     local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_love',
                         key_append)
                     G.MythJokerMod.j_love_created = true
                     card:set_eternal(true)
                     return card
-                elseif not hasShopJokerWithAbility('Responsibility') and not hasJokerWithAbility('Responsibility') and G.GAME.round_resets.ante >= 2 then
+                elseif not hasShopJokerWithAbility('Responsibility') and not hasJokerWithAbility('Responsibility') and G.GAME.round_resets.ante >= 4 then
                     local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable,
                         'j_responsibility', key_append)
                     G.MythJokerMod.j_responsibility_created = true
                     card:set_eternal(true)
                     return card
-                elseif not hasShopJokerWithAbility('Growth') and not hasJokerWithAbility('Growth') and G.GAME.round_resets.ante >= 3 then
+                elseif not hasShopJokerWithAbility('Growth') and not hasJokerWithAbility('Growth') and G.GAME.round_resets.ante >= 5 then
                     local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_growth',
                         key_append)
                     G.MythJokerMod.j_growth_created = true
                     card:set_eternal(true)
                     return card
-                elseif not hasShopJokerWithAbility('Communication') and not hasJokerWithAbility('Communication') and G.GAME.round_resets.ante >= 4 then
+                elseif not hasShopJokerWithAbility('Communication') and not hasJokerWithAbility('Communication') and G.GAME.round_resets.ante >= 6 then
                     local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable,
                         'j_communication', key_append)
                     G.MythJokerMod.j_communication_created = true
                     card:set_eternal(true)
                     return card
-                elseif not hasShopJokerWithAbility('Loyalty') and not hasJokerWithAbility('Loyalty') and G.GAME.round_resets.ante >= 5 then
+                elseif not hasShopJokerWithAbility('Loyalty') and not hasJokerWithAbility('Loyalty') and G.GAME.round_resets.ante >= 7 then
                     local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_loyalty',
                         key_append)
                     G.MythJokerMod.j_loyalty_created = true
@@ -432,3 +432,6 @@ function SMODS.INIT.KissKiss()
         end
     end
 end
+
+----------------------------------------------
+------------MOD CODE END----------------------
