@@ -10,27 +10,6 @@
 -- NV81L1W1 seed
 
 function SMODS.INIT.KissKiss()
-    -- Growth Joker initialization
-    local j_growth = SMODS.Joker:new(
-        "Growth", "growth",
-        { extra = 10, mult = 100, eternal_compat = true },
-        { x = 0, y = 0 }, loc_def,
-        4, 0, true, true, true, true
-    )
-
-    j_growth.slug = "j_growth"
-    j_growth.loc_txt = {
-        name = "成长",
-        text = {
-            "这张小丑牌在每轮结束时获得{C:red}+#1#{}倍率",
-            "{C:inactive}（当前为{C:red}+#2#{}倍率）"
-        }
-    }
-    j_growth.mod = "kisskiss"
-    j_growth.atlas = "kisskiss"
-    j_growth:register()
-
-    -- Love Joker initialization
     local j_love = SMODS.Joker:new(
         "Love", "love",
         {},
@@ -47,8 +26,27 @@ function SMODS.INIT.KissKiss()
         }
     }
     j_love.mod = "kisskiss"
-    j_love.atlas = "kisskiss"
+    j_love.atlas = "j_love"
     j_love:register()
+
+    local j_growth = SMODS.Joker:new(
+        "Growth", "growth",
+        { extra = 10, mult = 100, eternal_compat = true },
+        { x = 0, y = 0 }, loc_def,
+        4, 0, true, true, true, true
+    )
+
+    j_growth.slug = "j_growth"
+    j_growth.loc_txt = {
+        name = "成长",
+        text = {
+            "这张小丑牌在每轮结束时获得{C:red}+#1#{}倍率",
+            "{C:inactive}（当前为{C:red}+#2#{}倍率）"
+        }
+    }
+    j_growth.mod = "kisskiss"
+    j_growth.atlas = "j_growth"
+    j_growth:register()
 
     local j_responsibility = SMODS.Joker:new(
         "Responsibility", "responsibility",
@@ -66,7 +64,7 @@ function SMODS.INIT.KissKiss()
         }
     }
     j_responsibility.mod = "kisskiss"
-    j_responsibility.atlas = "kisskiss"
+    j_responsibility.atlas = "j_responsibility"
     j_responsibility:register()
 
     local j_communication = SMODS.Joker:new(
@@ -85,7 +83,7 @@ function SMODS.INIT.KissKiss()
         }
     }
     j_communication.mod = "kisskiss"
-    j_communication.atlas = "kisskiss"
+    j_communication.atlas = "j_communication"
     j_communication:register()
 
     local j_loyalty = SMODS.Joker:new(
@@ -103,8 +101,22 @@ function SMODS.INIT.KissKiss()
         }
     }
     j_loyalty.mod = "kisskiss"
-    j_loyalty.atlas = "kisskiss"
+    j_loyalty.atlas = "j_loyalty"
     j_loyalty:register()
+
+    -- Additional Sprite registration
+    SMODS.Sprite:new("j_love", SMODS.findModByID("kisskiss").path, "j_love.png", 71, 95, "asset_atli")
+        :register()
+    SMODS.Sprite:new("j_growth", SMODS.findModByID("kisskiss").path, "j_growth.png", 71, 95, "asset_atli")
+        :register()
+    SMODS.Sprite:new("j_responsibility", SMODS.findModByID("kisskiss").path, "j_responsibility.png", 71, 95,
+        "asset_atli")
+        :register()
+    SMODS.Sprite:new("j_communication", SMODS.findModByID("kisskiss").path, "j_communication.png", 71, 95,
+        "asset_atli")
+        :register()
+    SMODS.Sprite:new("j_loyalty", SMODS.findModByID("kisskiss").path, "j_loyalty.png", 71, 95, "asset_atli")
+        :register()
 
 
     local Card_calculate_joker_ref = Card.calculate_joker
@@ -242,20 +254,6 @@ function SMODS.INIT.KissKiss()
         end
     end
 
-    -- Additional Sprite registration
-    SMODS.Sprite:new("kisskiss", SMODS.findModByID("kisskiss").path, "j_growth.png", 71, 95, "asset_atli")
-        :register()
-    SMODS.Sprite:new("kisskiss", SMODS.findModByID("kisskiss").path, "j_love.png", 71, 95, "asset_atli")
-        :register()
-    SMODS.Sprite:new("kisskiss", SMODS.findModByID("kisskiss").path, "j_responsibility.png", 71, 95,
-        "asset_atli")
-        :register()
-    SMODS.Sprite:new("kisskiss", SMODS.findModByID("kisskiss").path, "j_responsibility.png", 71, 95,
-        "asset_atli")
-        :register()
-    SMODS.Sprite:new("kisskiss", SMODS.findModByID("kisskiss").path, "j_loyalty.png", 71, 95, "asset_atli")
-        :register()
-
     function SMODS.Jokers.j_growth.loc_def(card)
         return { card.ability.extra, card.ability.mult }
     end
@@ -273,6 +271,7 @@ function SMODS.INIT.KissKiss()
     end
 
     Game:set_globals()
+    G.forced_seed = 'MARRYME'
 
     local function hasJokerWithAbility(ability)
         for k, v in ipairs(G.jokers.cards) do
@@ -297,27 +296,32 @@ function SMODS.INIT.KissKiss()
         if G.GAME and G.GAME.round_resets and G.GAME.round_resets.ante >= 1 then
             if area == G.shop_jokers then
                 if not hasShopJokerWithAbility('Love') and not hasJokerWithAbility('Love') and G.GAME.round_resets.ante >= 1 then
-                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_love', key_append)
+                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_love',
+                        key_append)
                     G.MythJokerMod.j_love_created = true
                     card:set_eternal(true)
                     return card
                 elseif not hasShopJokerWithAbility('Responsibility') and not hasJokerWithAbility('Responsibility') and G.GAME.round_resets.ante >= 2 then
-                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_responsibility', key_append)
+                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable,
+                        'j_responsibility', key_append)
                     G.MythJokerMod.j_responsibility_created = true
                     card:set_eternal(true)
                     return card
                 elseif not hasShopJokerWithAbility('Growth') and not hasJokerWithAbility('Growth') and G.GAME.round_resets.ante >= 3 then
-                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_growth', key_append)
+                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_growth',
+                        key_append)
                     G.MythJokerMod.j_growth_created = true
                     card:set_eternal(true)
                     return card
                 elseif not hasShopJokerWithAbility('Communication') and not hasJokerWithAbility('Communication') and G.GAME.round_resets.ante >= 4 then
-                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_communication', key_append)
+                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable,
+                        'j_communication', key_append)
                     G.MythJokerMod.j_communication_created = true
                     card:set_eternal(true)
                     return card
                 elseif not hasShopJokerWithAbility('Loyalty') and not hasJokerWithAbility('Loyalty') and G.GAME.round_resets.ante >= 5 then
-                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_loyalty', key_append)
+                    local card = createCardRef('Joker', area, legendary, _rarity, skip_materialize, soulable, 'j_loyalty',
+                        key_append)
                     G.MythJokerMod.j_loyalty_created = true
                     card:set_eternal(true)
                     return card
