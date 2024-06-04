@@ -7,14 +7,23 @@
 ----------------------------------------------
 ------------MOD CODE -------------------------
 
-
 -- Never debuff card if blink is "The Head" (protects All Hearts deck)
 local BlindDebuffCardRef = Blind.debuff_card
 function Blind:debuff_card(card, from_blind)
-    if self.name ~= 'The Head' then
-        BlindDebuffCardRef(self, card, from_blind)
+    BlindDebuffCardRef(self, card, from_blind)
+
+    local function hasJokerWithAbility(ability)
+        for k, v in ipairs(G.jokers.cards) do
+            if v.ability.name == ability then
+                return true
+            end
+        end
+        return false
     end
-    card:set_debuff(false)
+
+    if self.name == 'The Head' and hasJokerWithAbility('Love') then
+        card:set_debuff(false)
+    end
 end
 
 -- Force Lucky Card to trigger mult
