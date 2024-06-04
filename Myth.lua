@@ -31,7 +31,7 @@ function SMODS.INIT.KissKiss()
 
     local j_growth = SMODS.Joker:new(
         "Growth", "growth",
-        { extra = 10, mult = 100, eternal_compat = true },
+        { extra = 40, mult = 200, eternal_compat = true },
         { x = 0, y = 0 }, loc_def,
         4, 0, true, true, true, true
     )
