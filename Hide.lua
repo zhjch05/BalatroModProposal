@@ -18,7 +18,7 @@ end
 -- Hide Seed within run
 local Orginal_create_UIBox_generic_options = create_UIBox_generic_options
 function create_UIBox_generic_options(args)
-  if  #args==0 and args.contents and #args.contents>=2 and G.STAGE == G.STAGES.RUN then
+  if  #args==0 and args.contents and #args.contents>=2 and G.STAGE == G.STAGES.RUN and not G.GAME.won then
     table.remove(args.contents, 2)
   end
   return Orginal_create_UIBox_generic_options(args)
